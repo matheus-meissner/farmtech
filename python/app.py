@@ -10,7 +10,7 @@ def menu():
         print("4 - Deletar dados")
         print("5 - Salvar e sair")
         
-        opcao = input("Escolha uma opção: ")
+        opcao = input("\nEscolha uma opção: ")
 
         if opcao == "1":
             inserir_dados()

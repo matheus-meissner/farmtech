@@ -6,7 +6,7 @@ culturas = []
 def inserir_dados():
     print("\n1 - Cana-de-açúcar")
     print("2 - Café")
-    escolha = input("Escolha a cultura: ")
+    escolha = input("\nEscolha a cultura: ")
 
     if escolha == "1":
         comprimento = float(input("Digite o comprimento (m): "))
@@ -30,12 +30,12 @@ def listar_dados():
         return
 
     for i, c in enumerate(culturas):
-        print(f"\nID {i} | Cultura: {c['cultura']} | Área: {c['area']:.2f} m²")
+        print(f"\n| ID: {i} | \n| Cultura: {c['cultura']} | \n| Área: {c['area']:.2f} m² |")
         if c["cultura"] == "Cana-de-açúcar":
-            print(f"Ruas: {c['ruas']} | Sulco total: {c['sulco_total']} m")
+            print(f"| Ruas: {c['ruas']} | \n| Sulco total: {c['sulco_total']} m |")
         else:
-            print(f"Plantas: {c['plantas']}")
-        print(f"N: {c['N']:.2f} g | P: {c['P']:.2f} g | K: {c['K']:.2f} g")
+            print(f"| Plantas: {c['plantas']} |")
+        print(f"| N: {c['N']:.2f} g | \n| P: {c['P']:.2f} g | \n| K: {c['K']:.2f} g |")
 
 def atualizar_dados():
     idx = int(input("Digite o ID do registro para atualizar: "))
