@@ -4,8 +4,9 @@
 # e imprime no terminal informações meteorológicas.
 
 # Pacotes necessários
-needs <- c("httr","jsonlite")
-for (p in needs) if (!requireNamespace(p, quietly = TRUE)) install.packages(p)
+if (!require(httr)) install.packages("httr", repos = "https://cloud.r-project.org")
+if (!require(jsonlite)) install.packages("jsonlite", repos = "https://cloud.r-project.org")
+
 library(httr)
 library(jsonlite)
 
