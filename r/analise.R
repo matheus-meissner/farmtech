@@ -89,4 +89,10 @@ if ("cultura" %in% names(df)) {
                           "P_media","P_desvio",
                           "K_media","K_desvio")
     write.csv(resumo_df, file = "estatisticas_resumo.csv", row.names = FALSE)
-    cat("\nArquivo gerado: r/est
+    cat("\nArquivo gerado: r/estatisticas_resumo.csv\n")
+  }
+} else {
+  cat("\n(coluna 'cultura' não encontrada; pulando estatísticas por cultura)\n")
+}
+
+cat("\nConcluído.\n")
