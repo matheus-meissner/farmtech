@@ -6,22 +6,28 @@
 
 # ---- Funções auxiliares ----
 safe_mean <- function(x) mean(x, na.rm = TRUE)
-safe_sd   <- function(x) sd(x, na.rm = TRUE)
-
+safe_sd <- function(x) {
+  x <- x[!is.na(x)]
+  if (length(x) <= 1) return(0)  # evita NA quando há 1 valor
+  sd(x)
+}
 to_numeric <- function(v) suppressWarnings(as.numeric(v))
 
 # ---- Localização do arquivo ----
 candidatos <- c("../python/dados.csv", "./dados.csv", "./python/dados.csv")
 arquivo <- candidatos[file.exists(candidatos)][1]
-if (is.na(arquivo)) {
-  stop("dados.csv não encontrado. Gere pelo app Python e rode novamente.")
+if (is.na(arquivo)) stop("dados.csv não encontrado. Gere pelo app Python e rode novamente.")
+
+# ---- Leitura (robusta a encoding) ----
+ok <- TRUE
+tryCatch({
+  df <- read.csv(arquivo, stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+}, error = function(e) ok <<- FALSE)
+
+if (!ok) {
+  df <- read.csv(arquivo, stringsAsFactors = FALSE, fileEncoding = "Latin1")
 }
 
-# ---- Leitura ----
-df <- read.csv(arquivo, sep = ",", dec = ".", stringsAsFactors = FALSE, check.names = FALSE)
-
-# Espera-se que o CSV tenha colunas como:
-# cultura, area, ruas, sulco_total, plantas, N, P, K
 # Converter o que for numérico
 cols_num <- intersect(c("area","ruas","sulco_total","plantas","N","P","K"), names(df))
 for (c in cols_num) df[[c]] <- to_numeric(df[[c]])
@@ -42,6 +48,9 @@ if (all(c("N","P","K") %in% names(df))) {
 
 # ---- Estatísticas por cultura ----
 if ("cultura" %in% names(df)) {
+  # Se vier NA por encoding, evita quebrar:
+  df$cultura[is.na(df$cultura) | df$cultura == ""] <- "Desconhecida"
+
   cat("\n================ POR CULTURA ================\n")
   culturas <- unique(df$cultura)
   resumo_list <- list()
@@ -82,7 +91,6 @@ if ("cultura" %in% names(df)) {
   # Exportar resumo por cultura
   if (length(resumo_list) > 0) {
     resumo_df <- do.call(rbind.data.frame, resumo_list)
-    # Garantir nomes simples
     names(resumo_df) <- c("cultura","n",
                           "area_media","area_desvio",
                           "N_media","N_desvio",
