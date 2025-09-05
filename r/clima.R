@@ -4,9 +4,8 @@
 # e imprime no terminal informações meteorológicas.
 
 # Pacotes necessários
-if (!require(httr)) install.packages("httr", repos = "https://cloud.r-project.org")
-if (!require(jsonlite)) install.packages("jsonlite", repos = "https://cloud.r-project.org")
-
+needs <- c("httr","jsonlite")
+for (p in needs) if (!requireNamespace(p, quietly = TRUE)) install.packages(p)
 library(httr)
 library(jsonlite)
 
@@ -59,3 +58,7 @@ if (!is.null(data$hourly)) {
     cat(sprintf("%s\t%.2f\n", tms[i], prec[i]))
   }
 } else {
+  cat("\n(Não foi possível ler hourly)\n")
+}
+
+cat("\nConcluído.\n")
