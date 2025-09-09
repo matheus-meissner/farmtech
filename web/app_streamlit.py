@@ -226,6 +226,35 @@ st.markdown(
         margin-right: auto !important;
     }}
 
+    /* fundo vermelho nos botões da toolbar */
+    [data-testid="stElementToolbar"] button,
+    [data-testid="stElementToolbar"] [role="button"],
+    .stElementToolbar button {{
+        background-color: #E63946 !important;
+        border: 1px solid #B71C1C !important;
+        border-radius: 8px !important;
+        padding: 6px !important;
+        box-shadow: none !important;
+    }}
+
+
+
+    /* hover: tom mais escuro */
+    [data-testid="stElementToolbar"] button:hover,
+    [data-testid="stElementToolbar"] [role="button"]:hover,
+    .stElementToolbar button:hover {{
+        background-color: #C62828 !important;
+        border-color: #8E0000 !important;
+    }}
+
+    /* desabilitados ainda visíveis */
+    [data-testid="stElementToolbar"] button[disabled],
+    .stElementToolbar button[disabled] {{
+        opacity: 1 !important;
+        background-color: #E57373 !important;
+        border-color: #B71C1C !important;
+    }}
+
 
     </style>
     """,
