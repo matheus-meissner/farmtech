@@ -15,12 +15,14 @@ from pathlib import Path
 
 st.set_page_config(page_title="FarmTech • Agricultura Digital", layout="wide")
 
-img_path = Path(__file__).resolve().parents[1] / "img" / "fundo-fazenda.png"
+img_path = Path(__file__).resolve().parents[1] / "img" / "fundo-fazenda-50.png"
 img_base64 = b64encode(open(img_path, "rb").read()).decode()
 
 st.markdown(
     f"""
     <style>
+    /* ===== Fonte ===== */
+
     /* ===== Fundo ===== */
     .stApp {{
         position: relative;
