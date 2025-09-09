@@ -210,6 +210,15 @@ st.markdown(
         text-align: center !important;
     }}
 
+    /* Centralizar o wrapper pai do st.radio */
+    div.stElementContainer:has(.stRadio) {{
+        display: block !important;
+        width: fit-content !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }}
+
+
     </style>
     """,
     unsafe_allow_html=True
@@ -392,7 +401,7 @@ with tab3:
 # =============== CLIMA (Open-Meteo) ======================
 # =========================================================
 with tab4:
-    st.subheader("Clima — Open-Meteo (sem API key)")
+    st.subheader("Clima • Open-Meteo")
 
     # Layout em 4 colunas (igual ao Inserir dados)
     c1, c2, c3, c4 = st.columns(4)
