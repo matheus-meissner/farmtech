@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 import subprocess
 from pathlib import Path
-import sys
+import sys, requests
 
 # garante import dos módulos python/
 sys.path.append(str(Path(__file__).resolve().parents[1] / "python"))
@@ -18,22 +18,32 @@ if "registros" not in st.session_state:
 
 st.title("🌱 FarmTech Solutions — Agricultura Digital")
 
-tab1, tab2, tab3 = st.tabs(["➕ Inserir dados", "📋 Registros", "⬇️ Exportar / 📈 Visualizar"])
+tab1, tab2, tab3, tab4 = st.tabs([
+    "➕ Inserir dados",
+    "📋 Registros",
+    "⬇️ Exportar / 📈 Visualizar",
+    "☁️ Clima (Open-Meteo)"
+])
 
-# =============== INSERIR ===============
+# =========================================================
+# =============== INSERIR (com espaçamentos) ==============
+# =========================================================
 with tab1:
     st.subheader("Inserir novo talhão")
     cultura = st.radio("Cultura", ["Cana-de-açúcar", "Café"], horizontal=True)
 
-    colA, colB, colC = st.columns(3)
-
     if cultura == "Cana-de-açúcar":
+        colA, colB, colC, colD = st.columns(4)
         comprimento = colA.number_input("Comprimento (m)", min_value=0.0, step=1.0)
-        largura = colB.number_input("Largura (m)", min_value=0.0, step=1.0)
-        dose_ml_m = colC.number_input("Dose (mL por metro de sulco)", min_value=0.0, step=10.0)
-        produto = st.text_input("Produto (ex.: herbicida X)", value="herbicida")
+        largura     = colB.number_input("Largura (m)",     min_value=0.0, step=1.0)
+        espac_rua   = colC.number_input("Espaçamento entre ruas (m)", min_value=0.1, value=1.5, step=0.1,
+                                        help="Usado para calcular nº de ruas e metros de sulco")
+        dose_ml_m   = colD.number_input("Dose (mL por metro de sulco)", min_value=0.0, step=10.0)
+        produto     = st.text_input("Produto (ex.: herbicida X)", value="herbicida")
+
         if st.button("Adicionar cana"):
-            calc = calcular_cana(comprimento, largura)  # area, ruas, sulco_total, N, P, K
+            # passa o espaçamento para o cálculo (nº de ruas e sulco_total)
+            calc = calcular_cana(comprimento, largura, espacamento=espac_rua)
             litros = (dose_ml_m * calc["sulco_total"]) / 1000.0
             registro = {
                 "cultura": "Cana-de-açúcar",
@@ -48,16 +58,23 @@ with tab1:
                 "N": calc["N"],
                 "P": calc["P"],
                 "K": calc["K"],
+                # salva também o espaçamento usado (útil para auditoria)
+                "espac_rua_m": espac_rua
             }
             st.session_state.registros.append(registro)
             st.success("Cana adicionada!")
 
     else:  # Café
-        raio = colA.number_input("Raio (m)", min_value=0.0, step=1.0)
-        dose_ml_planta = colB.number_input("Dose (mL por planta)", min_value=0.0, step=10.0)
-        produto = colC.text_input("Produto (ex.: fosfato foliar Y)", value="fosfato foliar")
+        colA, colB, colC, colD = st.columns(4)
+        raio          = colA.number_input("Raio (m)", min_value=0.0, step=1.0)
+        espac_rua_caf = colB.number_input("Espaçamento entre ruas (m)", min_value=0.1, value=3.8, step=0.1)
+        espac_pla_caf = colC.number_input("Espaçamento entre plantas (m)", min_value=0.1, value=0.7, step=0.1)
+        dose_ml_planta= colD.number_input("Dose (mL por planta)", min_value=0.0, step=10.0)
+        produto       = st.text_input("Produto (ex.: fosfato foliar Y)", value="fosfato foliar")
+
         if st.button("Adicionar café"):
-            calc = calcular_cafe(raio)  # area, plantas, N, P, K
+            # passa os espaçamentos para estimar nº de plantas
+            calc = calcular_cafe(raio, espac_rua=espac_rua_caf, espac_planta=espac_pla_caf)
             litros = (dose_ml_planta * (calc["plantas"] or 0)) / 1000.0
             registro = {
                 "cultura": "Café",
@@ -72,18 +89,21 @@ with tab1:
                 "N": calc["N"],
                 "P": calc["P"],
                 "K": calc["K"],
+                "espac_rua_m": espac_rua_caf,
+                "espac_planta_m": espac_pla_caf
             }
             st.session_state.registros.append(registro)
             st.success("Café adicionado!")
 
-# =============== REGISTROS ===============
+# ====================================
+# =============== REGISTROS ==========
+# ====================================
 with tab2:
     st.subheader("Registros")
     if st.session_state.registros:
         df = pd.DataFrame(st.session_state.registros)
         st.dataframe(df, use_container_width=True)
 
-        # deletar selecionados
         st.markdown("### Remover registros")
         idxs = st.multiselect("Selecione pelo índice", options=list(range(len(df))))
         if st.button("Deletar selecionados"):
@@ -93,7 +113,9 @@ with tab2:
     else:
         st.info("Nenhum registro ainda. Adicione em **Inserir dados**.")
 
-# =============== EXPORTAR / VISUALIZAR ===============
+# =========================================================
+# =============== EXPORTAR / VISUALIZAR ===================
+# =========================================================
 with tab3:
     st.subheader("Exportar CSV e visualizar métricas")
 
@@ -102,20 +124,17 @@ with tab3:
         csv_bytes = df.to_csv(index=False).encode("utf-8-sig")
         st.download_button("⬇️ Baixar dados.csv", data=csv_bytes, file_name="dados.csv", mime="text/csv")
 
-        # Também salvar no diretório original python/ (para o R usar)
         base = Path(__file__).resolve().parents[1] / "python" / "dados.csv"
         if st.button("Salvar dados.csv na pasta python/"):
             salvar_csv(st.session_state.registros, arquivo=str(base))
             st.success(f"Salvo em {base}")
 
-        # KPIs simples
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("Registros", len(df))
         col2.metric("Área total (m²)", f"{df['area'].fillna(0).sum():.0f}")
         col3.metric("Litros totais", f"{df['litros'].fillna(0).sum():.2f}")
         col4.metric("Plantas (café)", f"{df['plantas'].fillna(0).sum():.0f}")
 
-        # Gráfico rápido (sem substituir os do R)
         st.markdown("### Nutrientes por cultura (média)")
         mean_df = (
             df[["cultura","N","P","K"]]
@@ -126,13 +145,10 @@ with tab3:
     else:
         st.info("Nada para exportar ainda.")
 
-    # --- Gráficos PNG gerados pelo R ---
     st.markdown("---")
     st.markdown("### Gráficos do R (PNG)")
     r_dir = Path(__file__).resolve().parents[1] / "r"
     png_dir = r_dir / "graficos"
-
-    colA, colB = st.columns(2)
 
     def _show_png(p: Path, caption: str):
         if p.exists():
@@ -140,10 +156,8 @@ with tab3:
         else:
             st.info(f"Arquivo não encontrado: `{p.name}`. Gere com **Rscript graficos.R**.")
 
-    # botões utilitários
     c1, c2 = st.columns(2)
     if c1.button("🔁 Regerar gráficos no R"):
-        # Requer R no PATH
         res = subprocess.run(
             ["Rscript", "graficos.R"],
             cwd=str(r_dir),
@@ -159,14 +173,62 @@ with tab3:
             st.error("Falha ao rodar `Rscript graficos.R`.")
             if res.stderr:
                 st.code(res.stderr)
-
     if c2.button("🔄 Recarregar imagens"):
         st.experimental_rerun()
 
+    colA, colB = st.columns(2)
     with colA:
         _show_png(png_dir / "histograma_area.png", "Distribuição da Área Plantada")
         _show_png(png_dir / "boxplot_insumos.png", "Insumos por Cultura (boxplot/pontos)")
     with colB:
         _show_png(png_dir / "medias_insumos.png", "Média dos Nutrientes por Cultura")
 
-st.caption("💡 Dica: depois de salvar o CSV em `python/dados.csv`, rode `Rscript analise.R` e `Rscript graficos.R` para gerar estatísticas e imagens (bg branco).")
+# =========================================================
+# =============== CLIMA (Open-Meteo) ======================
+# =========================================================
+with tab4:
+    st.subheader("Clima — Open-Meteo (sem API key)")
+
+    colL, colT = st.columns([2, 1])
+    cidade   = colL.text_input("Cidade (opcional, só para exibir no título)", value="São Paulo")
+    lat      = colT.number_input("Latitude",  value=-23.55, step=0.01, format="%.4f")
+    lon      = colT.number_input("Longitude", value=-46.63, step=0.01, format="%.4f")
+    tz       = st.selectbox("Timezone", ["America/Sao_Paulo", "UTC"], index=0)
+
+    if st.button("Consultar clima"):
+        url = (
+            "https://api.open-meteo.com/v1/forecast"
+            f"?latitude={lat}&longitude={lon}"
+            "&current_weather=true"
+            "&hourly=temperature_2m,precipitation,relative_humidity_2m"
+            f"&timezone={tz}"
+        )
+        try:
+            r = requests.get(url, timeout=20)
+            r.raise_for_status()
+            data = r.json()
+        except Exception as e:
+            st.error(f"Erro ao consultar Open-Meteo: {e}")
+            data = None
+
+        if data:
+            st.markdown(f"#### Tempo atual — {cidade}")
+            cw = data.get("current_weather", {})
+            if cw:
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Temperatura (°C)", f"{cw.get('temperature', '—')}")
+                c2.metric("Vento (km/h)", f"{cw.get('windspeed', '—')}")
+                c3.metric("Direção do vento (°)", f"{cw.get('winddirection', '—')}")
+                st.caption(f"Hora local: {cw.get('time', '—')}")
+            else:
+                st.info("Sem dados de tempo atual.")
+
+            hourly = data.get("hourly", {})
+            if hourly:
+                st.markdown("#### Próximas horas (12h)")
+                # Mostra uma pequena tabela com 12 registros
+                df_h = pd.DataFrame(hourly)[["time", "temperature_2m", "precipitation"]].head(12)
+                df_h.columns = ["Hora", "Temp (°C)", "Precip (mm)"]
+                st.dataframe(df_h, use_container_width=True, hide_index=True)
+            else:
+                st.info("Sem dados horários.")
