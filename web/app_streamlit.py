@@ -10,7 +10,88 @@ sys.path.append(str(Path(__file__).resolve().parents[1] / "python"))
 from calculos import calcular_cana, calcular_cafe
 from utils import salvar_csv
 
+from base64 import b64encode
+from pathlib import Path
+
 st.set_page_config(page_title="FarmTech • Agricultura Digital", layout="wide")
+
+img_path = Path(__file__).resolve().parents[1] / "img" / "fundo-fazenda.png"
+img_base64 = b64encode(open(img_path, "rb").read()).decode()
+
+st.markdown(
+    f"""
+    <style>
+    /* ===== Fundo ===== */
+    .stApp {{
+        position: relative;
+        overflow: hidden;
+    }}
+    .stApp::before {{
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/png;base64,{img_base64}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: 0;                 /* atrás */
+        pointer-events: none;
+    }}
+    [data-testid="stAppViewContainer"],
+    .block-container {{
+        position: relative;
+        z-index: 1;                 /* na frente */
+    }}
+
+    /* ===== Tipografia global ===== */
+    .stApp, .stApp * {{
+        color: #fff !important;     /* tudo branco por padrão */
+    }}
+
+    /* Cabeçalho/Rodapé (remover) */
+    [data-testid="stHeader"], footer {{ display: none; }}
+
+    /* ===== Campos de formulário (texto preto) ===== */
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select,
+    .stTextInput input,
+    .stNumberInput input,
+    .stTextArea textarea,
+    /* selectbox (BaseWeb) */
+    div[data-baseweb="select"] * {{
+        color: #000 !important;
+    }}
+    /* fundo branco nos inputs (opcional) */
+    input, textarea, select {{
+        background-color: #fff !important;
+    }}
+    /* placeholder mais visível */
+    input::placeholder,
+    textarea::placeholder {{
+        color: #666 !important;
+    }}
+
+    /* ===== Botões com label preta =====
+       Use seletores estáveis: .stButton e data-testid/baseweb  */
+    .stButton > button,
+    .stButton > button *,
+    .stDownloadButton > button,
+    .stDownloadButton > button *,
+    button[data-baseweb="button"],
+    [data-testid="baseButton-primary"],
+    [data-testid="baseButton-secondary"] {{
+        color: #000 !important;     /* 🔹 texto preto no botão */
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
 
 # --- estado ---
 if "registros" not in st.session_state:
