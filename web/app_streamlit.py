@@ -351,18 +351,26 @@ with tab1:
 # ====================================
 with tab2:
     st.subheader("Registros")
+
     if st.session_state.registros:
         df = pd.DataFrame(st.session_state.registros)
         st.dataframe(df, use_container_width=True)
 
         st.markdown("### Remover registros")
-        idxs = st.multiselect("Selecione pelo índice", options=list(range(len(df))))
+        idxs = st.multiselect(
+            "Selecione pelo índice",
+            options=list(range(len(df)))
+        )
+
         if st.button("Deletar selecionados"):
             for i in sorted(idxs, reverse=True):
                 st.session_state.registros.pop(i)
             st.success("Removidos.")
     else:
         st.info("Nenhum registro ainda. Adicione em **Inserir dados**.")
+
+
+
 
 # =========================================================
 # =============== EXPORTAR / VISUALIZAR ===================
