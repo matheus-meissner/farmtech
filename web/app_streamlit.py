@@ -26,8 +26,6 @@ img_base64 = b64encode(open(img_path, "rb").read()).decode()
 st.markdown(
     f"""
     <style>
-    /* ===== Fonte ===== */
-
     /* ===== Fundo ===== */
     .stApp {{
         position: relative;
@@ -46,6 +44,7 @@ st.markdown(
     }}
     [data-testid="stAppViewContainer"],
     .block-container {{
+        max-width: 1140px !important;
         margin-left: auto !important;
         margin-right: auto !important;
         text-align: center !important;
@@ -212,6 +211,15 @@ st.markdown(
 
     /* Centralizar o wrapper pai do st.radio */
     div.stElementContainer:has(.stRadio) {{
+        display: block !important;
+        width: fit-content !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }}
+
+    /* Centralizar wrapper pai de botões */
+    div.stElementContainer:has(.stButton),
+    div.stElementContainer:has(.stDownloadButton) {{
         display: block !important;
         width: fit-content !important;
         margin-left: auto !important;
