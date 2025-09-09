@@ -46,10 +46,14 @@ st.markdown(
     }}
     [data-testid="stAppViewContainer"],
     .block-container {{
+        margin-left: auto !important;
+        margin-right: auto !important;
+        text-align: center !important;
         padding-top: 2rem !important;
         position: relative;
         z-index: 1;                 /* na frente */
     }}
+
 
     /* ===== Tipografia global ===== */
     .stApp, .stApp * {{
@@ -197,6 +201,14 @@ st.markdown(
     justify-content: flex-start !important;
     }}
 
+    /* Centralizar a barra de abas */
+    [role="tablist"] {{
+        display: flex !important;
+        justify-content: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        text-align: center !important;
+    }}
 
     </style>
     """,
