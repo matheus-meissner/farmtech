@@ -13,7 +13,12 @@ from utils import salvar_csv
 from base64 import b64encode
 from pathlib import Path
 
-st.set_page_config(page_title="FarmTech • Agricultura Digital", layout="wide")
+st.set_page_config(
+    page_title="FarmTech • Agricultura Digital",
+    page_icon="../img/farmtech_icone.png",  # caminho relativo
+    layout="wide"
+)
+
 
 img_path = Path(__file__).resolve().parents[1] / "img" / "fundo-fazenda-50.png"
 img_base64 = b64encode(open(img_path, "rb").read()).decode()
@@ -88,6 +93,55 @@ st.markdown(
     [data-testid="baseButton-secondary"] {{
         color: #000 !important;     /* 🔹 texto preto no botão */
     }}
+
+    /* ==== Botões de input ==== */
+    /* Botões de incremento/decremento dos number_input */
+    .stNumberInput button {{
+        background-color: #e63946 !important; /* vermelho padrão */
+        color: #fff !important;
+        border: 1px solid #b71c1c !important;
+        border-radius: 4px !important;
+    }}
+
+    /* Ícones dentro dos botões (o + e o -) */
+    .stNumberInput button svg {{
+        stroke: #fff !important;
+        fill: #fff !important;
+    }}
+
+    /* Hover: vermelho mais escuro */
+    .stNumberInput button:hover {{
+        background-color: #c62828 !important;
+        border-color: #8e0000 !important;
+    }}
+
+    /* ===== Ajuste dos botões +/- ===== */
+    .stNumberInput button {{
+        background-color: #e63946 !important;  /* vermelho base */
+        color: #fff !important;
+        border: 1px solid #b71c1c !important;
+        padding: 0.25rem 0.75rem !important;
+        font-weight: bold;
+        box-shadow: none !important;
+    }}
+
+    /* Botão de decremento (esquerda) */
+    .stNumberInput button:first-of-type {{
+        border-radius: 6px 0 0 6px !important;   /* arredonda canto esquerdo */
+        border-right: none !important;           /* remove borda duplicada no meio */
+    }}
+
+    /* Botão de incremento (direita) */
+    .stNumberInput button:last-of-type {{
+        border-radius: 0 6px 6px 0 !important;   /* arredonda canto direito */
+    }}
+
+    /* Hover: tom mais escuro */
+    .stNumberInput button:hover {{
+        background-color: #c62828 !important;
+        border-color: #8e0000 !important;
+    }}
+
     </style>
     """,
     unsafe_allow_html=True
@@ -99,7 +153,7 @@ st.markdown(
 if "registros" not in st.session_state:
     st.session_state.registros = []
 
-st.title("🌱 FarmTech Solutions — Agricultura Digital")
+st.title("FarmTech Solutions • Agricultura Digital")
 
 tab1, tab2, tab3, tab4 = st.tabs([
     "➕ Inserir dados",
