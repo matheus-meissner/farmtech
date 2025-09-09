@@ -167,6 +167,37 @@ st.markdown(
         stroke: #fff !important;
     }}
 
+    /* Evita quebra de linha nos rótulos dos widgets (mantém os inputs alinhados) */
+    [data-testid="stWidgetLabel"],
+    [data-testid="stWidgetLabel"] > div {{
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important; /* mostra "..." se faltar espaço */
+    display: inline-block !important;
+    max-width: 100% !important;
+    vertical-align: middle !important;
+    }}
+
+    /* Mantém o ícone de ajuda na mesma linha do label */
+    [data-testid="stWidgetLabel"] + div [data-testid="stTooltipHoverTarget"],
+    [aria-label="Toggle tooltip"] {{
+    vertical-align: middle !important;
+    }}
+
+    /* Opcional: reduz um pouco a altura do cabeçalho do campo */
+    [data-testid="stWidgetLabel"] {{
+    line-height: 1.15 !important;
+    margin-bottom: 0.25rem !important;
+    }}
+
+    /* Opcional: se algum input ainda "escorregar", garanta alinhamento das colunas */
+    .stColumn {{
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    }}
+
+
     </style>
     """,
     unsafe_allow_html=True
