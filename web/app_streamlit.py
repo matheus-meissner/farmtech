@@ -46,6 +46,7 @@ st.markdown(
     }}
     [data-testid="stAppViewContainer"],
     .block-container {{
+        padding-top: 2rem !important;
         position: relative;
         z-index: 1;                 /* na frente */
     }}
@@ -335,7 +336,7 @@ with tab3:
             if res.stderr:
                 st.code(res.stderr)
     if c2.button("🔄 Recarregar imagens"):
-        st.experimental_rerun()
+        st.rerun()
 
     colA, colB = st.columns(2)
     with colA:
