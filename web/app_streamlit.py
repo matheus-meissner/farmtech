@@ -382,11 +382,14 @@ with tab3:
 with tab4:
     st.subheader("Clima — Open-Meteo (sem API key)")
 
-    colL, colT = st.columns([2, 1])
-    cidade   = colL.text_input("Cidade (opcional, só para exibir no título)", value="São Paulo")
-    lat      = colT.number_input("Latitude",  value=-23.55, step=0.01, format="%.4f")
-    lon      = colT.number_input("Longitude", value=-46.63, step=0.01, format="%.4f")
-    tz       = st.selectbox("Timezone", ["America/Sao_Paulo", "UTC"], index=0)
+    # Layout em 4 colunas (igual ao Inserir dados)
+    c1, c2, c3, c4 = st.columns(4)
+
+    cidade = c1.text_input("Cidade (opcional, só para exibir no título)", value="São Paulo")
+    lat    = c2.number_input("Latitude",  value=-23.55, step=0.01, format="%.4f")
+    lon    = c3.number_input("Longitude", value=-46.63, step=0.01, format="%.4f")
+    tz     = c4.selectbox("Timezone", ["America/Sao_Paulo", "UTC"], index=0)
+
 
     if st.button("Consultar clima"):
         url = (
