@@ -91,7 +91,8 @@ st.markdown(
     button[data-baseweb="button"],
     [data-testid="baseButton-primary"],
     [data-testid="baseButton-secondary"] {{
-        color: #000 !important;     /* 🔹 texto preto no botão */
+        color: #fff !important;     /* 🔹 texto preto no botão */
+        background-color: #e63946 !important; /* vermelho padrão */
     }}
 
     /* ==== Botões de input ==== */
@@ -140,6 +141,29 @@ st.markdown(
     .stNumberInput button:hover {{
         background-color: #c62828 !important;
         border-color: #8e0000 !important;
+    }}
+
+    /* ===== Hover global para todos os botões ===== */
+    .stButton > button:hover,
+    .stDownloadButton > button:hover,
+    button[data-baseweb="button"]:hover,
+    [data-testid="baseButton-primary"]:hover,
+    [data-testid="baseButton-secondary"]:hover,
+    .stButton > button:hover p,
+    .stDownloadButton > button:hover p,
+    button[data-baseweb="button"]:hover p,
+    [data-testid="baseButton-primary"]:hover p,
+    [data-testid="baseButton-secondary"]:hover p {{
+        background-color: #c62828 !important; /* mesmo vermelho do +/- */
+    }}
+
+
+    /* Garante que ícones dentro dos botões também fiquem brancos */
+    .stButton > button:hover svg,
+    .stDownloadButton > button:hover svg,
+    button[data-baseweb="button"]:hover svg {{
+        fill: #fff !important;
+        stroke: #fff !important;
     }}
 
     </style>
