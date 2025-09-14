@@ -66,10 +66,11 @@ No Python, instale os pacotes:
 
 ```bash
 pip install -r requirements.txt
+```
 Pacotes principais: streamlit, pandas, requests
 
 2) 💻 Rodar a versão em terminal (CLI)
-bash
+```bash
 Copiar código
 cd python
 python app.py
@@ -85,6 +86,7 @@ Deletar dados
 
 Salvar e sair
 
+```
 3) 🌐 Rodar a versão com interface gráfica (Streamlit)
 bash
 Copiar código
