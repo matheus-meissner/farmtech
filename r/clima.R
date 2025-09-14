@@ -41,24 +41,24 @@ if (!is.null(data$current_weather)) {
   cat("\n(Não foi possível ler current_weather)\n")
 }
 
-# ---- Resumo de precipitação nas próximas horas ----
+# ---- Resumo de temperaturas nas próximas horas ----
 if (!is.null(data$hourly)) {
   hrs <- data$hourly
   # Próximas 12 horas (se disponível)
   n <- min(12, length(hrs$time))
-  prec <- hrs$precipitation[seq_len(n)]
-  tms  <- hrs$time[seq_len(n)]
-  total_prec <- sum(prec, na.rm = TRUE)
+  temps <- hrs$temperature_2m[seq_len(n)]
+  tms   <- hrs$time[seq_len(n)]
+
   cat("\n===== PRÓXIMAS HORAS (12h) =====\n")
-  cat(sprintf("Precipitação acumulada: %.1f mm\n", total_prec))
   # Mostra primeiras 5 linhas de exemplo
-  cat("\nHora\t\tPrecip(mm)\n")
-  head_n <- min(5, n)
+  cat("\nHora\t\tTemp(°C)\n")
+  head_n <- min(10, n)
   for (i in seq_len(head_n)) {
-    cat(sprintf("%s\t%.2f\n", tms[i], prec[i]))
+    cat(sprintf("%s\t%.1f\n", tms[i], temps[i]))
   }
 } else {
   cat("\n(Não foi possível ler hourly)\n")
 }
+
 
 cat("\nConcluído.\n")
