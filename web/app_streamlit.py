@@ -253,7 +253,45 @@ st.markdown(
         opacity: 1 !important;
         background-color: #E57373 !important;
         border-color: #B71C1C !important;
+    }}'
+
+    /* Centraliza o bloco do botão de submit */
+    [data-testid="stFormSubmitButton"] {{
+    display: block !important;
+    text-align: center !important;          /* centraliza o conteúdo interno */
     }}
+    [data-testid="stFormSubmitButton"] > div {{
+    display: inline-block !important;       /* permite centralizar pelo text-align */
+    }}
+
+
+    /* === Botão de submit do st.form === */
+    div[data-testid="stElementContainer"]:has([data-testid="stFormSubmitButton"]) {{
+    display: block !important;
+    width: fit-content !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    }}
+
+    [data-testid="stFormSubmitButton"] button {{          /* estilo igual aos outros */
+    background-color: #e63946 !important;              /* vermelho base */
+    color: #fff !important;
+    border: 1px solid #b71c1c !important;
+    border-radius: 8px !important;
+    padding: 8px 14px !important;
+    box-shadow: none !important;
+    }}
+
+    [data-testid="stFormSubmitButton"] button:hover {{
+    background-color: #c62828 !important;              /* hover mais escuro */
+    border-color: #8e0000 !important;
+    }}
+
+    [data-testid="stFormSubmitButton"] button svg {{
+    fill: #fff !important;
+    stroke: #fff !important;                            /* garante ícone branco */
+    }}
+
 
 
     </style>
@@ -355,6 +393,112 @@ with tab2:
     if st.session_state.registros:
         df = pd.DataFrame(st.session_state.registros)
         st.dataframe(df, use_container_width=True)
+
+        # ====== EDITAR (acima do deletar) ======
+        st.markdown("### Editar registro")
+        idx_editar = st.selectbox(
+            "Escolha o índice para editar",
+            options=list(range(len(df))),
+            format_func=lambda i: f"{i} • {df.loc[i, 'cultura']}"
+        )
+
+        if idx_editar is not None:
+            row = st.session_state.registros[idx_editar]
+            cultura_sel = row.get("cultura", "Cana-de-açúcar")
+
+            with st.form(key=f"form_editar_{idx_editar}", clear_on_submit=False):
+                st.write(f"**Cultura:** {cultura_sel}")
+
+                if cultura_sel == "Cana-de-açúcar":
+                    c1, c2, c3, c4 = st.columns(4)
+                    comprimento = c1.number_input(
+                        "Comprimento (m)",
+                        min_value=0.0, step=1.0,
+                        value=float(row.get("sulco_total", 0) / max(row.get("ruas", 1), 1))
+                        if row.get("ruas") else float(row.get("area", 0) ** 0.5)
+                    )
+                    largura = c2.number_input(
+                        "Largura (m)",
+                        min_value=0.0, step=1.0,
+                        value=float(row.get("area", 0) / max(comprimento, 1)) if row.get("area") else 0.0
+                    )
+                    espac_rua = c3.number_input(
+                        "Espaçamento entre ruas (m)",
+                        min_value=0.1, step=0.1, value=float(row.get("espac_rua_m", 1.5))
+                    )
+                    dose_ml_m = c4.number_input(
+                        "Dose (mL por metro de sulco)",
+                        min_value=0.0, step=10.0, value=float(row.get("dose_ml_por_m") or 0.0)
+                    )
+                    produto = st.text_input("Produto", value=row.get("produto", "herbicida"))
+
+                else:  # Café
+                    c1, c2, c3, c4 = st.columns(4)
+                    # Reconstituímos um raio aproximado a partir da área, se existir
+                    area_atual = float(row.get("area", 0.0))
+                    raio = c1.number_input(
+                        "Raio (m)", min_value=0.0, step=0.1,
+                        value=float((area_atual / 3.1415926535) ** 0.5) if area_atual > 0 else 0.0
+                    )
+                    espac_rua_caf = c2.number_input(
+                        "Espaçamento entre ruas (m)",
+                        min_value=0.1, step=0.1, value=float(row.get("espac_rua_m", 3.8))
+                    )
+                    espac_pla_caf = c3.number_input(
+                        "Espaçamento entre plantas (m)",
+                        min_value=0.1, step=0.1, value=float(row.get("espac_planta_m", 0.7))
+                    )
+                    dose_ml_planta = c4.number_input(
+                        "Dose (mL por planta)",
+                        min_value=0.0, step=10.0, value=float(row.get("dose_ml_por_planta") or 0.0)
+                    )
+                    produto = st.text_input("Produto", value=row.get("produto", "fosfato foliar"))
+
+                salvar_edicao = st.form_submit_button("Salvar alterações")
+                if salvar_edicao:
+                    if cultura_sel == "Cana-de-açúcar":
+                        from calculos import calcular_cana  # mantém coesão com backend
+                        calc = calcular_cana(comprimento, largura, espacamento=espac_rua)
+                        litros = (dose_ml_m * calc["sulco_total"]) / 1000.0
+                        st.session_state.registros[idx_editar] = {
+                            **row,
+                            "cultura": "Cana-de-açúcar",
+                            "area": calc["area"],
+                            "ruas": calc["ruas"],
+                            "sulco_total": calc["sulco_total"],
+                            "plantas": None,
+                            "produto": produto,
+                            "dose_ml_por_m": dose_ml_m,
+                            "dose_ml_por_planta": None,
+                            "litros": litros,
+                            "N": calc["N"],
+                            "P": calc["P"],
+                            "K": calc["K"],
+                            "espac_rua_m": espac_rua
+                        }
+                    else:
+                        from calculos import calcular_cafe
+                        calc = calcular_cafe(raio, espac_rua=espac_rua_caf, espac_planta=espac_pla_caf)
+                        litros = (dose_ml_planta * (calc["plantas"] or 0)) / 1000.0
+                        st.session_state.registros[idx_editar] = {
+                            **row,
+                            "cultura": "Café",
+                            "area": calc["area"],
+                            "ruas": None,
+                            "sulco_total": None,
+                            "plantas": calc["plantas"],
+                            "produto": produto,
+                            "dose_ml_por_m": None,
+                            "dose_ml_por_planta": dose_ml_planta,
+                            "litros": litros,
+                            "N": calc["N"],
+                            "P": calc["P"],
+                            "K": calc["K"],
+                            "espac_rua_m": espac_rua_caf,
+                            "espac_planta_m": espac_pla_caf
+                        }
+                    st.success("Registro atualizado com sucesso!")
+                    st.rerun()
 
         st.markdown("### Remover registros")
         idxs = st.multiselect(
