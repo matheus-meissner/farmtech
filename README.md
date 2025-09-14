@@ -112,7 +112,7 @@ Isso gera gráficos em .png dentro da pasta r/graficos/:
 📦 Boxplot dos insumos
 📈 Médias de nutrientes por cultura
 
-###5) ☁️ Consultar Clima (API Open-Meteo)
+### 5) ☁️ Consultar Clima (API Open-Meteo)
 Na aba Clima do Streamlit:
 
 Informe latitude/longitude
@@ -124,8 +124,8 @@ Temperatura atual 🌡️
 Vento e direção 💨
 Precipitação prevista ☔
 
-##📹 Demonstração em Vídeo
+## 📹 Demonstração em Vídeo
 O vídeo completo está disponível no arquivo video.txt
 
-##📑 Resumo Acadêmico
+## 📑 Resumo Acadêmico
 Conforme solicitado na disciplina de Formação Social, o resumo do artigo da Embrapa está incluído na entrega (formato Word/PDF).
