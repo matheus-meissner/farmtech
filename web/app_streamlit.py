@@ -570,18 +570,14 @@ with tab3:
         )
         if res.returncode == 0:
             st.success("Gráficos gerados. Clique em **Recarregar imagens**.")
-            if res.stdout:
-                st.code(res.stdout)
         else:
             st.error("Falha ao rodar `Rscript graficos.R`.")
-            if res.stderr:
-                st.code(res.stderr)
     if c2.button("🔄 Recarregar imagens"):
         st.rerun()
 
     colA, colB = st.columns(2)
     with colA:
-        _show_png(png_dir / "histograma_area.png", "Distribuição da Área Plantada")
+        _show_png(png_dir / "desvio.png", "Área por Cultura — Média ± Desvio-padrão")
         _show_png(png_dir / "boxplot_insumos.png", "Insumos por Cultura (boxplot/pontos)")
     with colB:
         _show_png(png_dir / "medias_insumos.png", "Média dos Nutrientes por Cultura")

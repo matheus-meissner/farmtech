@@ -36,21 +36,39 @@ if (!dir.exists("graficos")) dir.create("graficos")
 base_theme <- theme_minimal(base_size = 14, base_family = "Arial")
 
 # ================================
-# 1) Histograma da Área Plantada
+# 1) Área por cultura: média ± desvio
+#    (substitui o histograma_area.png)
 # ================================
-bins_n <- max(5, min(20, length(unique(na.omit(df$area)))))  # bins dinâmicos
+df_area_stats <- df %>%
+  group_by(cultura) %>%
+  summarise(
+    n      = sum(!is.na(area)),
+    media  = mean(area, na.rm = TRUE),
+    desvio = sd(area,   na.rm = TRUE),
+    .groups = "drop"
+  )
 
-p1 <- ggplot(df, aes(x = area, fill = cultura)) +
-  geom_histogram(bins = bins_n, color = "black", alpha = 0.7, na.rm = TRUE) +
+# Se houver só 1 ponto em alguma cultura, sd = NA -> usa 0 para não quebrar as barras de erro
+df_area_stats$desvio[is.na(df_area_stats$desvio)] <- 0
+
+p1 <- ggplot(df_area_stats, aes(x = cultura, y = media, fill = cultura)) +
+  geom_col(width = 0.6, alpha = 0.85) +
+  geom_errorbar(aes(ymin = pmax(media - desvio, 0), ymax = media + desvio),
+                width = 0.15, linewidth = 0.9) +
+  geom_text(aes(label = paste0("n=", n)),
+            vjust = -1.2, size = 4) +
   base_theme +
   labs(
-    title = "Distribuição da Área Plantada",
-    x = "Área (m²)",
-    y = "Frequência"
+    title = "Área Plantada por Cultura — Média ± Desvio-padrão",
+    x = "Cultura",
+    y = "Área (m²)",
+    fill = "Cultura",
+    subtitle = "Barras: média | Hastes: ±1 desvio-padrão"
   ) +
-  scale_fill_brewer(palette = "Set2", name = "Cultura")
+  scale_fill_brewer(palette = "Set2") +
+  ylim(0, max(df_area_stats$media + df_area_stats$desvio, na.rm = TRUE) * 1.15)
 
-ggsave("graficos/histograma_area.png", p1, width = 8, height = 5, dpi = 150, bg = "white")
+ggsave("graficos/desvio.png", p1, width = 8, height = 5, dpi = 150, bg = "white")
 
 # ================================
 # 2) Boxplot dos Insumos (N, P, K)
