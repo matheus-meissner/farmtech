@@ -1,0 +1,2 @@
+https://youtu.be/A65TVugfMiE - Vídeo de entrega
+https://youtu.be/kODDlMMVCy8 - Vídeo contendo os EXTRAS (Api do Clima (Open-Meteor) | Gráficos com R | integração com front-end (Streamlit))
