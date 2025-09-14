@@ -32,7 +32,7 @@ O objetivo do projeto é digitalizar cálculos agrícolas para aumentar a produt
 ---
 
 ## 🛠️ Estrutura do Projeto
-
+```bash
 📦 farmtech
 ┣ 📂 python
 ┃ ┣ app.py # CLI com menu de opções (terminal)
@@ -53,9 +53,7 @@ O objetivo do projeto é digitalizar cálculos agrícolas para aumentar a produt
 ┣ INSTRUCOES.txt # Requisitos da atividade avaliativa
 ┣ video.txt # Link do vídeo no YouTube
 
-yaml
-Copiar código
-
+```
 ---
 
 ## ▶️ Como Executar
