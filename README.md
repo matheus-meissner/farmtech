@@ -69,80 +69,63 @@ pip install -r requirements.txt
 ```
 Pacotes principais: streamlit, pandas, requests
 
-2) 💻 Rodar a versão em terminal (CLI)
+### 2) 💻 Rodar a versão em terminal (CLI)
 ```bash
-Copiar código
 cd python
+```
+```bash
 python app.py
+```
+
 Menu interativo disponível:
 
 Inserir dados
-
 Listar dados
-
 Atualizar dados
-
 Deletar dados
-
 Salvar e sair
 
-```
-3) 🌐 Rodar a versão com interface gráfica (Streamlit)
-bash
-Copiar código
+### 3) 🌐 Rodar a versão com interface gráfica (Streamlit)
+```bash
 cd web
+```
+```bash
 streamlit run app_streamlit.py
+```
+
 Abas disponíveis:
 
 ➕ Inserir dados
-
 📋 Registros (com edição e exclusão)
-
 📈 Visualizar métricas + Exportar CSV + Gráficos em R
-
 ☁️ Consultar clima (API Open-Meteo)
 
-4) 📊 Estatísticas em R
+### 4) 📊 Estatísticas em R
 Entre na pasta r/ e rode:
 
-bash
-Copiar código
+```bash
 Rscript graficos.R
+```
 Isso gera gráficos em .png dentro da pasta r/graficos/:
 
 📊 Histograma da área plantada
-
 📦 Boxplot dos insumos
-
 📈 Médias de nutrientes por cultura
 
-5) ☁️ Consultar Clima (API Open-Meteo)
+###5) ☁️ Consultar Clima (API Open-Meteo)
 Na aba Clima do Streamlit:
 
 Informe latitude/longitude
-
 Escolha timezone
-
 Clique em Consultar clima
 
 Exibe:
-
 Temperatura atual 🌡️
-
 Vento e direção 💨
-
 Precipitação prevista ☔
 
-📹 Demonstração em Vídeo
-O vídeo completo está disponível em:
-👉 Link no arquivo video.txt
+##📹 Demonstração em Vídeo
+O vídeo completo está disponível no arquivo video.txt
 
-📑 Resumo Acadêmico
+##📑 Resumo Acadêmico
 Conforme solicitado na disciplina de Formação Social, o resumo do artigo da Embrapa está incluído na entrega (formato Word/PDF).
-
-🤝 Colaboração
-Este projeto foi desenvolvido em equipe, utilizando GitHub para versionamento colaborativo.
-Contribuições são bem-vindas!
-
-👨‍💻 Autores
-Equipe FarmTech Solutions — FIAP 🌐
