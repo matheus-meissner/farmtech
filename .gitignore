@@ -5,3 +5,4 @@ python/dados.csv
 r/graficos/histograma_area.png
 r/graficos/boxplot_insumos.png
 r/graficos/medias_insumos.png
+/python/__pycache__
